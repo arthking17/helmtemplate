@@ -1,9 +1,7 @@
-Namespace: iris-ws-customer
+Namespace: iris-ws-admin
 
+Image: admin-ws:1.0.4
 Container:
-  Name: customer-ws
-  ImageName: customer-ws
-  ImageVersion: 1.0.7
   Ports:
   - 9990
   - 8080
@@ -14,12 +12,10 @@ Service:
     Protocol: "TCP"
     Port: 8080
     TargetPort: 8080
-    NodePort: 30880
   - Name: admin-port
     Protocol: "TCP"
     Port: 9990
     TargetPort: 9990
-    NodePort: 30990
   Type: LoadBalancer
 
 DB:
@@ -48,5 +44,4 @@ DB:
       - Protocol: "TCP"
         Port: 8081
         TargetPort: 8081
-        NodePort: 30081
       Type: LoadBalancer

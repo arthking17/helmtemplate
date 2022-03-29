@@ -16,10 +16,10 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
-      - name: {{ .Values.Container.Name }}
-        image: wi11i4m/{{ .Values.Container.ImageName }}:{{ .Values.Container.ImageVersion }}
+      - name: {{ .Release.Name }}
+        image: {{ .Values.Image }}
         ports:
-        {{- range $.Values.Container.Ports }}
+        {{- range .Values.Container.Ports }}
         - containerPort: {{ . }}
         {{- end }}
 ---
@@ -30,7 +30,7 @@ metadata:
   namespace: {{ .Values.Namespace }}
 spec:
   ports:
-    {{- range $.Values.Service.Ports }}
+    {{- range .Values.Service.Ports }}
     - name: {{ .Name }}
       protocol: {{ .Protocol | quote | upper }}
       port: {{ .Port }}
