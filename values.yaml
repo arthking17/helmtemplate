@@ -1,4 +1,5 @@
-Namespace: iris-ws
+Namespace: iris-ws-customer
+
 Container:
   Name: customer-ws
   ImageName: customer-ws
@@ -13,10 +14,39 @@ Service:
     Protocol: "TCP"
     Port: 8080
     TargetPort: 8080
-    NodePort: 30980
+    NodePort: 30880
   - Name: admin-port
     Protocol: "TCP"
     Port: 9990
     TargetPort: 9990
-    NodePort: 30999
+    NodePort: 30990
   Type: LoadBalancer
+
+DB:
+  Name: mongo
+  Username: cm9vdA==
+  Password: d2lsbGlhbQ==
+  Container:
+    Name: mongo
+    ImageName: mongo
+    ImageVersion: latest
+    Ports:
+    - 27017
+  Service:
+    Ports:
+    - Protocol: "TCP"
+      Port: 27017
+      TargetPort: 27017
+  Visualizer:
+    Name: mongo-express
+    Container:
+      Name: mongo-express
+      Image: mongo-express
+      Port: 8081
+    Service:
+      Ports:
+      - Protocol: "TCP"
+        Port: 8081
+        TargetPort: 8081
+        NodePort: 30081
+      Type: LoadBalancer

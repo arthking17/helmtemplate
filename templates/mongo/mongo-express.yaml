@@ -1,66 +1,69 @@
+{{- with .Values.DB.Visualizer }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-express
-  namespace: iris-ws
+  name: {{ .Name }}
+  namespace: {{ $.Values.Namespace }}
   labels:
-    app: mongo-express
+    app: {{ .Name }}
 spec:
-  replicas: 1
+  replicas: {{ .replicas | default 1 }}
   selector:
     matchLabels:
-      app: mongo-express
+      app: {{ .Name }}
   template:
     metadata:
       labels:
-        app: mongo-express
+        app: {{ .Name }}
     spec:
       containers:
-      - name: mongo-express
-        image: mongo-express
+      - name: {{ .Container.Name }}
+        image: {{ .Container.image | default "mongo-express" }}
         ports:
-        - containerPort: 8081
+        - containerPort: {{ .Container.Port | default 8081 }}
         env:
-        - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+        - name: ME_CONFIG_{{ $.Values.DB.Name | upper }}DB_ADMINUSERNAME
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-username
-        - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+              name: {{ $.Values.DB.Name }}-secret
+              key: {{ $.Values.DB.Name | lower }}-root-username
+        - name: ME_CONFIG_{{ $.Values.DB.Name | upper }}DB_ADMINPASSWORD
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-password
-        - name: ME_CONFIG_MONGODB_SERVER
+              name: {{ $.Values.DB.Name }}-secret
+              key: {{ $.Values.DB.Name | lower }}-root-password
+        - name: ME_CONFIG_{{ $.Values.DB.Name | upper }}DB_SERVER
           valueFrom:
             configMapKeyRef:
-              name: mongodb-configmap
+              name: {{ $.Values.DB.Name }}-configmap
               key: database_url
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-express-service
-  namespace: iris-ws
+  name: {{ .Name }}-service
+  namespace: {{ $.Values.Namespace }}
 spec:
   ports:
     - protocol: "TCP"
-      port: 8081       
-      targetPort: 8081  
-      nodePort: 30081
+      port: {{ .TargetPort | default 8081 }}       
+      targetPort: {{ .TargetPort | default 8081 }}  
+      nodePort: {{ .NodePort }}
   type: LoadBalancer       
   selector:
-    app: mongo-express
+    app: {{ .Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-express-internal-service
-  namespace: iris-ws
+  name: {{ .Name }}-internal-service
+  namespace: {{ $.Values.Namespace }}
 spec:
   ports:
-    - protocol: "TCP"
-      port: 8081
-      targetPort: 8081
+    - protocol: {{ .Service.Protocol | default "TCP" }}
+      port: {{ .Service.TargetPort | default 8081 }}
+      targetPort: {{ .Service.TargetPort | default 8081 }}
   selector:
-    app: mongo-express
+    app: {{ .Name }}
+
+{{- end }}

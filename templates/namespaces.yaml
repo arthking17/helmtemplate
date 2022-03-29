@@ -1,8 +1,4 @@
-{{- range .Values.Namespaces }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ . | title }}
-
----
-{{- end }}
+  name: {{ .Values.Namespace }}

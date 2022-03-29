@@ -20,7 +20,7 @@ spec:
         image: wi11i4m/{{ .Values.Container.ImageName }}:{{ .Values.Container.ImageVersion }}
         ports:
         {{- range $.Values.Container.Ports }}
-        - containerPort: {{ . | title }}
+        - containerPort: {{ . }}
         {{- end }}
 ---
 apiVersion: v1
@@ -33,7 +33,7 @@ spec:
     {{- range $.Values.Service.Ports }}
     - name: {{ .Name }}
       protocol: {{ .Protocol | quote | upper }}
-      port: {{ .PortNumber }}
+      port: {{ .Port }}
       targetPort: {{ .TargetPort }}
       nodePort: {{ .NodePort }}
     {{- end }}

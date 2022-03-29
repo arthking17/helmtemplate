@@ -1,46 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb-deployment
-  namespace: iris-ws
+  name: {{ .Values.DB.Name }}-deployment
+  namespace: {{ .Values.Namespace }}
   labels:
-    app: mongodb
+    app: {{ .Values.DB.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.DB.replicas | default 1 }}
   selector:
     matchLabels:
-      app: mongodb
+      app: {{ .Values.DB.Name }}
   template:
     metadata:
       labels:
-        app: mongodb
+        app: {{ .Values.DB.Name }}
     spec:
       containers:
-      - name: mongodb
-        image: mongo
+      - name: {{ .Values.DB.Container.Name | default "mongo" }}
+        image: {{ .Values.DB.Container.Image | default "mongo" }}
         ports:
-        - containerPort: 27017
+        - containerPort: {{ .Values.DB.Container.Port | default 27017 }}
         env:
-        - name: MONGO_INITDB_ROOT_USERNAME
+        - name: {{ $.Values.DB.Name | upper }}_INITDB_ROOT_USERNAME
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-username
-        - name: MONGO_INITDB_ROOT_PASSWORD
+              name: {{ $.Values.DB.Name | lower }}-secret
+              key: {{ $.Values.DB.Name | lower }}-root-username
+        - name: {{ $.Values.DB.Name | upper }}_INITDB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-password
+              name: {{ $.Values.DB.Name | lower }}-secret
+              key: {{ $.Values.DB.Name | lower }}-root-password
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-service
-  namespace: iris-ws
+  name: {{ .Values.DB.Name }}-service
+  namespace: {{ .Values.Namespace }}
 spec:
   ports:
-    - protocol: "TCP"
-      port: 27017       
-      targetPort: 27017   
+    - protocol: {{ .Values.DB.Service.Protocol | default "TCP" | quote | upper }} 
+      port: {{ .Values.DB.Service.Port | default 27017 }}       
+      targetPort: {{ .Values.DB.Service.TargetPort | default 27017 }}   
   selector:
-    app: mongodb
+    app: {{ .Values.DB.Name }}
