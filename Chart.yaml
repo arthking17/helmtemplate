@@ -1,6 +1,12 @@
 apiVersion: v2
-name: .
-description: A Helm chart for Kubernetes
+name: iris-ws
+description: A Helm chart for Deployment of microservice in Kubernetes Cluster
+
+home: https://github.com/arthking17/helmtemplate/tree/main
+
+maintainers:
+  - email: nguesseuarthur17@gmail.com
+    name: arthking17
 
 # A chart can be either an 'application' or a 'library' chart.
 #
